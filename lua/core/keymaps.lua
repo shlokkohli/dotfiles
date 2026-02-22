@@ -1,3 +1,4 @@
+local opts = { noremap = true, silent = true }
 -- Set leader key
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
@@ -23,9 +24,6 @@ vim.keymap.set('i', 'jk', '<Esc>', { noremap = true, silent = true })
 
 -- Disable the spacebar key's default behavior in Normal and Visual modes
 vim.keymap.set({ 'n', 'v' }, '<Space>', '<Nop>', { silent = true })
-
--- For conciseness
-local opts = { noremap = true, silent = true }
 
 vim.keymap.set('n', '<leader>cc', '<cmd>cclose<CR>', { desc = 'Close quickfix' })
 
@@ -67,14 +65,13 @@ vim.keymap.set('n', '<Right>', ':vertical resize +2<CR>', opts)
 -- Buffers
 vim.keymap.set('n', '<Tab>', ':bnext<CR>', opts)
 vim.keymap.set('n', '<S-Tab>', ':bprevious<CR>', opts)
-vim.keymap.set('n', '<leader>x', ':bp|bd #<CR>', opts)
 vim.keymap.set('n', '<leader>b', '<cmd> enew <CR>', opts) -- new buffer
+vim.keymap.set('n', '<leader>x', '<Cmd>BufferClose<CR>', opts)
 
 -- Window management
 vim.keymap.set('n', '<leader>v', '<C-w>v', opts) -- split window vertically
 vim.keymap.set('n', '<leader>h', '<C-w>s', opts) -- split window horizontally
 vim.keymap.set('n', '<leader>se', '<C-w>=', opts) -- make split windows equal width & height
-vim.keymap.set('n', '<leader>xs', ':close<CR>', opts) -- close current split window
 
 -- Navigate between splits
 vim.keymap.set('n', '<C-k>', ':wincmd k<CR>', opts)
@@ -118,7 +115,6 @@ vim.api.nvim_create_autocmd('TermOpen', {
     vim.cmd 'startinsert'
   end,
 })
-
 -- barbar keymaps
 vim.keymap.set('n', '<A-,>', '<Cmd>BufferPrevious<CR>', { silent = true })
 vim.keymap.set('n', '<A-.>', '<Cmd>BufferNext<CR>', { silent = true })
