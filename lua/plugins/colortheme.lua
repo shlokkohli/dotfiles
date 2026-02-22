@@ -1,9 +1,10 @@
 return {
   {
-    'olimorris/onedarkpro.nvim',
+    'EdenEast/nightfox.nvim',
     priority = 1000,
     config = function()
-      vim.cmd.colorscheme 'onedark'
+      require('nightfox').setup {}
+      vim.cmd.colorscheme 'carbonfox'
     end,
   },
 }
