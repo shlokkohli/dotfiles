@@ -1,0 +1,16 @@
+# plugin downloads
+lazy-lock.json
+lazy/
+
+# swap / temp
+*.swp
+*.swo
+*~
+
+# macOS
+.DS_Store
+
+# logs
+log
+logs
+*.log
