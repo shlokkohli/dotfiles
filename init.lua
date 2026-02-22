@@ -1,3 +1,11 @@
+local orig = vim.deprecate
+vim.deprecate = function(name, alternative, version, plugin, backtrace)
+  if name and name:match 'sign_define' then
+    return
+  end
+  return orig(name, alternative, version, plugin, backtrace)
+end
+
 require 'core.options' -- Load general options
 require 'core.keymaps' -- Load general keymaps
 require 'core.snippets' -- Custom code snippets
