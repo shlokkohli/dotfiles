@@ -115,6 +115,22 @@ vim.api.nvim_create_autocmd('TermOpen', {
     vim.cmd 'startinsert'
   end,
 })
+
+vim.api.nvim_create_autocmd("BufDelete", {
+  callback = function()
+    local wins = vim.api.nvim_tabpage_list_wins(0)
+
+    if #wins == 1 then
+      local buf = vim.api.nvim_win_get_buf(wins[1])
+      local ft = vim.bo[buf].filetype
+
+      if ft == "neo-tree" then
+        vim.cmd("enew")
+      end
+    end
+  end,
+})
+
 -- barbar keymaps
 vim.keymap.set('n', '<A-,>', '<Cmd>BufferPrevious<CR>', { silent = true })
 vim.keymap.set('n', '<A-.>', '<Cmd>BufferNext<CR>', { silent = true })
