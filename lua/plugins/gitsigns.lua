@@ -18,7 +18,7 @@ return {
         topdelete = { text = '‾' },
         changedelete = { text = '~' },
       },
-      current_line_blame = true, -- show blame info at end of line
+      current_line_blame = true,
       on_attach = function(bufnr)
         local gs = package.loaded.gitsigns
         local map = function(mode, l, r, opts)
@@ -27,7 +27,6 @@ return {
           vim.keymap.set(mode, l, r, opts)
         end
 
-        -- Navigate hunks
         map('n', ']c', gs.next_hunk, { desc = 'Next Git Hunk' })
         map('n', '[c', gs.prev_hunk, { desc = 'Prev Git Hunk' })
       end,
@@ -46,12 +45,11 @@ return {
       end
 
       git_conflict.setup {
-        default_mappings = false, -- disable built-in keymaps if you want custom ones
-        default_commands = true, -- enables :GitConflictChooseOurs etc.
+        default_mappings = false,
+        default_commands = true,
         disable_diagnostics = false,
       }
 
-      -- Custom keybindings for conflict resolution
       vim.keymap.set('n', '<leader>go', ':GitConflictChooseOurs<CR>', { desc = 'Choose ours' })
       vim.keymap.set('n', '<leader>gt', ':GitConflictChooseTheirs<CR>', { desc = 'Choose theirs' })
       vim.keymap.set('n', '<leader>gb', ':GitConflictChooseBoth<CR>', { desc = 'Choose both' })
@@ -63,26 +61,29 @@ return {
   {
     'NeogitOrg/neogit',
     dependencies = {
-      'nvim-lua/plenary.nvim', -- required
-      'sindrets/diffview.nvim', -- for rich diffs
-      'nvim-telescope/telescope.nvim', -- optional, for selecting commits/branches
+      'nvim-lua/plenary.nvim',
+      'sindrets/diffview.nvim',
+      'nvim-telescope/telescope.nvim',
     },
     config = function()
       local neogit = require 'neogit'
       neogit.setup {
         integrations = {
-          diffview = true, -- use diffview for diffs
+          diffview = true,
         },
-        kind = 'tab', -- open in a new tab like VS Code's Source Control
+        kind = 'tab',
         disable_commit_confirmation = true,
       }
 
-      -- Keymaps for Neogit & Diffview
       vim.keymap.set('n', '<leader>gs', function()
         neogit.open { kind = 'tab' }
       end, { desc = 'Open Neogit (tab)' })
 
-      vim.keymap.set('n', '<leader>gd', '<cmd>DiffviewOpen<CR>', { desc = 'Open Diffview' })
+      -- show whitespace changes also
+      vim.keymap.set('n', '<leader>gd', function()
+        vim.cmd('DiffviewOpen --no-ignore-whitespace')
+      end, { desc = 'Open Diffview (show all changes)' })
+
       vim.keymap.set('n', '<leader>gD', '<cmd>DiffviewClose<CR>', { desc = 'Close Diffview' })
     end,
   },
@@ -93,10 +94,10 @@ return {
     dependencies = 'nvim-lua/plenary.nvim',
     config = function()
       require('diffview').setup {
-        enhanced_diff_hl = true, -- better syntax highlighting in diffs
+        enhanced_diff_hl = true,
         view = {
           default = {
-            layout = 'diff2_horizontal', -- side-by-side
+            layout = 'diff2_horizontal',
           },
         },
         file_panel = {
