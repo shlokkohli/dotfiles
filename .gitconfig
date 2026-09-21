@@ -3,6 +3,7 @@
 	email = shlokkohli11@gmail.com
 [core]
 	pager = delta
+	editor = nvim
 [interactive]
 	diffFilter = delta --color-only
 [delta]

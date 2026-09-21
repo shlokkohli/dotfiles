@@ -39,127 +39,9 @@ return {
     local make_entry = require 'telescope.make_entry'
     local pickers = require 'telescope.pickers'
     local previewers = require 'telescope.previewers'
-    local previewer_utils = require 'telescope.previewers.utils'
     local sorters = require 'telescope.sorters'
     local utils = require 'telescope.utils'
     local search_config = require 'config.search'
-
-    local image_extensions = {
-      png = true,
-      jpg = true,
-      jpeg = true,
-      gif = true,
-      webp = true,
-      avif = true,
-      bmp = true,
-      ico = true,
-      heic = true,
-      heif = true,
-      svg = true,
-    }
-
-    local function is_image_path(path)
-      if not path or path == '' then
-        return false
-      end
-
-      local ext = path:match '%.([^./\\]+)$'
-      return ext and image_extensions[ext:lower()] or false
-    end
-
-    local function clear_image_previews(winid)
-      if not winid or not vim.api.nvim_win_is_valid(winid) then
-        return
-      end
-
-      local ok, image = pcall(require, 'image')
-      if not ok then
-        return
-      end
-
-      for _, img in ipairs(image.get_images { window = winid }) do
-        pcall(function()
-          img:clear()
-        end)
-      end
-    end
-
-    local function set_preview_message(bufnr, winid, message)
-      if vim.api.nvim_buf_is_valid(bufnr) then
-        vim.bo[bufnr].modifiable = true
-      end
-
-      if winid and vim.api.nvim_win_is_valid(winid) then
-        previewer_utils.set_preview_message(bufnr, winid, message, '╱')
-        if vim.api.nvim_buf_is_valid(bufnr) then
-          vim.bo[bufnr].modifiable = false
-        end
-        return
-      end
-
-      if vim.api.nvim_buf_is_valid(bufnr) then
-        vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, { message })
-        vim.bo[bufnr].modifiable = false
-      end
-    end
-
-    local default_buffer_previewer_maker = previewers.buffer_previewer_maker
-
-    local function image_buffer_previewer_maker(filepath, bufnr, opts)
-      opts = opts or {}
-      local winid = opts.winid
-
-      if is_image_path(filepath) then
-        if vim.api.nvim_buf_is_valid(bufnr) then
-          vim.bo[bufnr].modifiable = true
-          vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, { '' })
-          vim.bo[bufnr].modifiable = false
-        end
-
-        vim.schedule(function()
-          if not winid or not vim.api.nvim_win_is_valid(winid) or not vim.api.nvim_buf_is_valid(bufnr) then
-            return
-          end
-
-          if vim.api.nvim_win_get_buf(winid) ~= bufnr then
-            return
-          end
-
-          clear_image_previews(winid)
-
-          local ok, image = pcall(require, 'image')
-          if not ok then
-            set_preview_message(bufnr, winid, 'image.nvim unavailable')
-            return
-          end
-
-          local rendered, img = pcall(function()
-            return vim.api.nvim_win_call(winid, function()
-              return image.hijack_buffer(filepath, winid, bufnr, {
-                max_width_window_percentage = 100,
-                max_height_window_percentage = 100,
-              })
-            end)
-          end)
-
-          if not rendered or not img then
-            set_preview_message(bufnr, winid, 'Image preview unavailable')
-            return
-          end
-
-          vim.wo[winid].number = false
-          vim.wo[winid].relativenumber = false
-          vim.wo[winid].cursorline = false
-          vim.wo[winid].signcolumn = 'no'
-          vim.wo[winid].foldcolumn = '0'
-        end)
-
-        return
-      end
-
-      clear_image_previews(winid)
-      default_buffer_previewer_maker(filepath, bufnr, opts)
-    end
 
     local telescope_toggle_keys = {
       '<leader>sk',
@@ -497,7 +379,6 @@ return {
             preview_width = 0.55,
           },
         },
-        buffer_previewer_maker = image_buffer_previewer_maker,
         -- VS Code-style literal search: override rg defaults to include --fixed-strings
         -- so dots, brackets, etc. are matched literally and trailing spaces matter.
         vimgrep_arguments = vimgrep_arguments,

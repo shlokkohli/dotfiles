@@ -40,7 +40,6 @@ vim.o.autoread = true -- Reload files changed outside Neovim when safe
 vim.o.undofile = false -- Save undo history (default: false)
 vim.o.completeopt = 'menuone,noselect' -- Set completeopt to have a better completion experience (default: 'menu,preview')
 vim.opt.shortmess:append 'c' -- Don't give |ins-completion-menu| messages (default: does not include 'c')
-vim.opt.shortmess:append 'I' -- Suppress the default Neovim intro screen (avoids flash before dashboard loads)
 vim.opt.formatoptions:remove { 'c', 'r', 'o' } -- Don't insert the current comment leader automatically for auto-wrapping comments using 'textwidth', hitting <Enter> in insert mode, or hitting 'o' or 'O' in normal mode. (default: 'croql')
 vim.opt.runtimepath:remove '/usr/share/vim/vimfiles' -- Separate Vim plugins from Neovim in case Vim still in use (default: includes this path if Vim is installed)
 

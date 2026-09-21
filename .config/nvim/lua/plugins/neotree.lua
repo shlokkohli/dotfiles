@@ -216,6 +216,15 @@ return {
       vim.notify('Moved to Trash: ' .. (#paths == 1 and vim.fn.fnamemodify(paths[1], ':t') or #paths .. ' items'))
     end
 
+    local custom_trash = function(state)
+      local node = state.tree:get_node()
+      trash_nodes(state, { node })
+    end
+
+    local custom_trash_visual = function(state, selected_nodes)
+      trash_nodes(state, selected_nodes)
+    end
+
     require('neo-tree').setup {
       close_if_last_window = false, -- Close Neo-tree if it is the last window left in the tab
       popup_border_style = 'rounded',
@@ -318,13 +327,8 @@ return {
           local width = vim.api.nvim_win_get_width(0)
           vim.api.nvim_win_set_width(0, width + 2)
         end,
-        trash = function(state)
-          local node = state.tree:get_node()
-          trash_nodes(state, { node })
-        end,
-        trash_visual = function(state, selected_nodes)
-          trash_nodes(state, selected_nodes)
-        end,
+        trash = custom_trash,
+        trash_visual = custom_trash_visual,
       },
       window = {
         position = 'left',
@@ -463,7 +467,10 @@ return {
           },
         },
 
-        commands = {}, -- Add a custom command or override a global one using the same function name
+        commands = {
+          trash = custom_trash,
+          trash_visual = custom_trash_visual,
+        }, -- Add a custom command or override a global one using the same function name
       },
       buffers = {
         follow_current_file = {
@@ -507,6 +514,10 @@ return {
             ['os'] = { 'order_by_size', nowait = false },
             ['ot'] = { 'order_by_type', nowait = false },
           },
+        },
+        commands = {
+          trash = custom_trash,
+          trash_visual = custom_trash_visual,
         },
       },
     }

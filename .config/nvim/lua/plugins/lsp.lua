@@ -257,7 +257,7 @@ return {
             if text:match '^%s*import%s*{' or text:match '^%s*import%s+' then
               return false
             end
-            if text:match '^%s*<%/?' .. escaped then
+            if text:match('^%s*<%/?' .. escaped) then
               return false
             end
             for _, pat in ipairs(declaration_patterns) do
@@ -389,9 +389,31 @@ return {
             return jump_to_location(unique[1], offset_encoding)
           end
 
+          -- Tier 1: strong declaration signals (const/let/function/class/etc.)
           local declarations = declaration_locations(unique, symbol)
           if #declarations == 1 then
             return jump_to_location(declarations[1], offset_encoding)
+          end
+
+          if #declarations == 0 then
+            local escaped = vim.pesc(symbol)
+            local pure_bindings = vim.tbl_filter(function(loc)
+              local text = location_line_text(loc) or ''
+              -- Line must start with (optional whitespace + optional rest-spread + symbol)
+              if not text:match('^%s*%.?%.?%.?' .. escaped) then
+                return false
+              end
+              -- Reject type-annotation lines: symbol followed by optional '?' then ':'
+              -- e.g. `  entryPrice: string;` or `  entryPrice?: boolean;`
+              if text:match('^%s*%.?%.?%.?' .. escaped .. '%s*%??%s*:') then
+                return false
+              end
+              return true
+            end, unique)
+
+            if #pure_bindings == 1 then
+              return jump_to_location(pure_bindings[1], offset_encoding)
+            end
           end
 
           show_locations_in_telescope(vim.lsp.util.locations_to_items(unique, offset_encoding), title)
