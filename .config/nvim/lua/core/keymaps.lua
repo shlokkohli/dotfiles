@@ -618,6 +618,9 @@ end, vim.tbl_extend('force', opts, {
   nowait = true,
   desc = 'Force close buffer without saving',
 }))
+vim.keymap.set('n', '<leader>xa', '<Cmd>BufferCloseAllButCurrent<CR>', vim.tbl_extend('force', opts, {
+  desc = 'Close all buffers except current',
+}))
 
 -- Window management
 vim.keymap.set('n', '<leader>v', '<C-w>v', opts) -- split window vertically

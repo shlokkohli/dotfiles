@@ -339,6 +339,27 @@ return {
         end
       end
 
+      local function file_panel_half_page(down)
+        local ok, lib = pcall(require, 'diffview.lib')
+        local view = ok and lib.get_current_view()
+        local panel = view and view.panel
+        if not panel or not panel:is_open() then
+          return
+        end
+        local win = panel.winid
+        if not win or not vim.api.nvim_win_is_valid(win) or type(panel.constrain_cursor) ~= 'function' then
+          return
+        end
+        local count = vim.v.count
+        if count == 0 then
+          count = math.max(1, math.floor(vim.api.nvim_win_get_height(win) / 2))
+        end
+        if not down then
+          count = -count
+        end
+        pcall(vim.api.nvim_win_set_cursor, win, { panel.constrain_cursor(win, count), 0 })
+      end
+
       require('diffview').setup {
         enhanced_diff_hl = true,
         hooks = {
@@ -363,6 +384,12 @@ return {
             { 'n', 'X', confirm_restore_entry, { desc = 'Restore entry to the state on the left side' } },
             { 'n', '<leader>e', actions.toggle_files, { desc = 'Toggle the file panel' } },
             { 'n', '<leader>b', false },
+            { 'n', '<C-d>', function()
+              file_panel_half_page(true)
+            end, { desc = 'Half page down (stay in file list)' } },
+            { 'n', '<C-u>', function()
+              file_panel_half_page(false)
+            end, { desc = 'Half page up (stay in file list)' } },
           },
         },
       }
